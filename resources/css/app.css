@@ -1,0 +1,262 @@
+/* resources/css/app.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import './fonts.css';
+@import 'tailwindcss';
+
+/* Color Palette - Vintage Old Money */
+:root {
+    /* Primary Colors */
+    --cream: #F5F1E8;
+    --beige: #E8DCC4;
+    --ivory: #FFFFF0;
+    
+    /* Dark Colors */
+    --charcoal: #2C2C2C;
+    --deep-gray: #3D3D3D;
+    --black-coffee: #1A1A1A;
+    
+    /* Accent Colors */
+    --burgundy: #6B2D2D;
+    --wine: #8B3A3A;
+    --forest-green: #2D4A2F;
+    --sage: #8A9A5B;
+    --gold: #C9A961;
+    --antique-gold: #B8964F;
+    
+    /* Neutral */
+    --warm-gray: #A39E93;
+    --cool-gray: #8B8680;
+    
+    /* Font Families */
+    --font-essones: 'Essones', serif;
+    --font-parlare: 'Parlare', serif;
+    --font-domus: 'Domus', sans-serif;
+    
+    /* Transitions */
+    --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Base Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: auto; /* Akan dioverride oleh smooth scroll library */
+    overflow-x: hidden;
+}
+
+body {
+    font-family: var(--font-domus);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+}
+
+/* Selection Color */
+::selection {
+    background-color: var(--gold);
+    color: var(--charcoal);
+}
+
+::-moz-selection {
+    background-color: var(--gold);
+    color: var(--charcoal);
+}
+
+/* Custom Scrollbar (fallback) */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--cream);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--warm-gray);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--burgundy);
+}
+
+/* Smooth Scroll Container */
+.smooth-scroll {
+    will-change: transform;
+}
+
+/* Typography Base Classes */
+.text-display {
+    font-family: var(--font-essones);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.text-heading {
+    font-family: var(--font-parlare);
+    font-weight: 700;
+}
+
+.text-body {
+    font-family: var(--font-domus);
+    font-weight: 400;
+}
+
+/* Animation Utilities */
+.blur-in {
+    filter: blur(20px);
+    opacity: 0;
+    transition: filter 0.8s var(--transition-smooth), 
+                opacity 0.8s var(--transition-smooth);
+}
+
+.blur-in.visible {
+    filter: blur(0);
+    opacity: 1;
+}
+
+.slide-up {
+    transform: translateY(100px);
+    opacity: 0;
+    transition: transform 0.8s var(--transition-smooth),
+                opacity 0.8s var(--transition-smooth);
+}
+
+.slide-up.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.scale-in {
+    transform: scale(0.8);
+    opacity: 0;
+    transition: transform 0.6s var(--transition-bounce),
+                opacity 0.6s var(--transition-smooth);
+}
+
+.scale-in.visible {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Parallax Effect */
+.parallax {
+    will-change: transform;
+}
+
+/* Button Hover Effect */
+.hover-grow {
+    transition: transform 0.3s var(--transition-bounce);
+}
+
+.hover-grow:hover {
+    transform: scale(1.05);
+}
+
+/* Text Hover Effect */
+.hover-underline {
+    position: relative;
+    display: inline-block;
+}
+
+.hover-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: currentColor;
+    transition: width 0.3s var(--transition-smooth);
+}
+
+.hover-underline:hover::after {
+    width: 100%;
+}
+
+/* Grain Texture Overlay (Optional) */
+.grain-texture {
+    position: relative;
+    overflow: hidden;
+}
+
+.grain-texture::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Filter Invert for Navbar */
+.filter-invert {
+    mix-blend-mode: difference;
+    filter: invert(1);
+}
+
+/* Loading State */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--warm-gray) 0%,
+        var(--cool-gray) 50%,
+        var(--warm-gray) 100%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Utility Classes untuk Grid Memory Section */
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1rem;
+}
+
+.memory-grid-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+    :root {
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 1920px) {
+    :root {
+        font-size: 18px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+}
