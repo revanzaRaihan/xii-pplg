@@ -1,7 +1,7 @@
 // resources/js/Components/Yearbook/Goodbye.tsx
 
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 
 const Goodbye: React.FC = () => {
     const sectionRef = useRef<HTMLDivElement>(null);
@@ -11,253 +11,115 @@ const Goodbye: React.FC = () => {
         offset: ['start end', 'end start'],
     });
 
-    const scale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1]);
-    const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
+    // Animasi yang lebih halus menggunakan Spring
+    const scale = useSpring(useTransform(scrollYProgress, [0, 0.5], [0.8, 1]), {
+        stiffness: 100,
+        damping: 30,
+    });
+    
+    const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+    const yText = useTransform(scrollYProgress, [0, 1], [100, -100]);
 
     return (
         <section
             id="goodbye"
             ref={sectionRef}
-            className="relative min-h-screen flex items-center justify-center overflow-hidden grain-texture"
-            style={{ backgroundColor: 'var(--cream)' }}
+            className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#faf9f6]"
         >
+            {/* Grainy Texture Layer */}
+            <div className="absolute inset-0 opacity-[0.4] pointer-events-none mix-blend-multiply bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+
             <motion.div
                 style={{ scale, opacity }}
-                className="max-w-5xl mx-auto px-6 lg:px-12 text-center"
+                className="relative z-10 max-w-5xl mx-auto px-6 text-center"
             >
-                {/* Main Thank You Message */}
-                <motion.h2
-                    className="text-display mb-8"
-                    style={{
-                        fontSize: 'clamp(4rem, 12vw, 10rem)',
-                        lineHeight: '0.9',
-                        color: 'var(--charcoal)',
-                    }}
-                    initial={{ opacity: 0, y: 100 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                >
-                    Thank
-                    <br />
-                    <span style={{ color: 'var(--burgundy)' }}>You</span>
-                </motion.h2>
-
-                {/* Subtitle */}
-                <motion.p
-                    className="text-heading mb-12"
-                    style={{
-                        fontSize: 'clamp(1.25rem, 3vw, 2rem)',
-                        color: 'var(--warm-gray)',
-                    }}
-                    initial={{ opacity: 0, y: 50 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, delay: 0.3 }}
-                >
-                    For visiting our digital yearbook
-                </motion.p>
-
-                {/* Description */}
-                <motion.p
-                    className="text-body mb-16"
-                    style={{
-                        fontSize: 'clamp(0.875rem, 1.2vw, 1rem)',
-                        color: 'var(--cool-gray)',
-                        maxWidth: '32rem',
-                        margin: '0 auto 4rem',
-                        lineHeight: '1.8',
-                    }}
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, delay: 0.5 }}
-                >
-                    Kami harap perjalanan melalui kenangan kami memberikan inspirasi dan
-                    gambaran tentang semangat kami sebagai siswa RPL.
-                </motion.p>
-
-                {/* Call to Action */}
-                <motion.div
-                    className="mb-20"
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, delay: 0.7 }}
-                >
-                    <p
-                        className="text-body mb-6"
-                        style={{
-                            fontSize: '0.875rem',
-                            color: 'var(--charcoal)',
-                            letterSpacing: '0.1em',
-                            textTransform: 'uppercase',
-                        }}
+                {/* Main Heading dengan Efek Parallax */}
+                <motion.div style={{ y: yText }} className="mb-12">
+                    <span className="block text-[10px] uppercase tracking-[0.8em] text-[#8b7e74] mb-8 font-bold">
+                        End of Chapter
+                    </span>
+                    <h2 
+                        className="font-serif italic leading-[0.8] text-[#1a1a1a]" 
+                        style={{ fontSize: 'clamp(5rem, 15vw, 12rem)' }}
                     >
-                        Check us out!
-                    </p>
-                    <div className="flex items-center justify-center gap-6 flex-wrap">
-                        <motion.a
-                            href="https://instagram.com/rpl.class"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover-underline text-body"
-                            style={{
-                                fontSize: '1rem',
-                                color: 'var(--burgundy)',
-                                fontWeight: 'bold',
-                            }}
-                            whileHover={{ x: 5 }}
-                        >
-                            Instagram →
-                        </motion.a>
-                        <motion.a
-                            href="https://github.com/rpl-class"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover-underline text-body"
-                            style={{
-                                fontSize: '1rem',
-                                color: 'var(--burgundy)',
-                                fontWeight: 'bold',
-                            }}
-                            whileHover={{ x: 5 }}
-                        >
-                            GitHub →
-                        </motion.a>
-                    </div>
+                        Thank <br />
+                        <span className="text-[#630d0d] relative">
+                            You
+                            {/* Decorative Line under "You" */}
+                            <motion.div 
+                                initial={{ width: 0 }}
+                                whileInView={{ width: '100%' }}
+                                transition={{ duration: 1.5, delay: 0.5, ease: [0.65, 0, 0.35, 1] }}
+                                className="absolute -bottom-4 left-0 h-[2px] bg-[#630d0d]/20"
+                            />
+                        </span>
+                    </h2>
                 </motion.div>
 
-                {/* Divider */}
-                <motion.div
-                    className="w-32 h-px mx-auto mb-16"
-                    style={{ backgroundColor: 'var(--warm-gray)' }}
-                    initial={{ width: 0 }}
-                    whileInView={{ width: '8rem' }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, delay: 0.9 }}
-                />
-
-                {/* Credits */}
-                <motion.div
-                    className="space-y-6"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, delay: 1.1 }}
-                >
-                    <div>
-                        <p
-                            className="text-body mb-2"
-                            style={{
-                                fontSize: '0.625rem',
-                                color: 'var(--cool-gray)',
-                                letterSpacing: '0.15em',
-                                textTransform: 'uppercase',
-                            }}
-                        >
-                            Website Created By
-                        </p>
-                        <p
-                            className="text-heading"
-                            style={{
-                                fontSize: 'clamp(1.25rem, 2vw, 1.75rem)',
-                                color: 'var(--charcoal)',
-                            }}
-                        >
-                            [Your Name]
-                        </p>
-                        <p
-                            className="text-body"
-                            style={{
-                                fontSize: '0.75rem',
-                                color: 'var(--warm-gray)',
-                            }}
-                        >
-                            Full Stack Developer - RPL 2024
-                        </p>
-                    </div>
-
-                    <div>
-                        <p
-                            className="text-body mb-2"
-                            style={{
-                                fontSize: '0.625rem',
-                                color: 'var(--cool-gray)',
-                                letterSpacing: '0.15em',
-                                textTransform: 'uppercase',
-                            }}
-                        >
-                            Built With
-                        </p>
-                        <p
-                            className="text-body"
-                            style={{
-                                fontSize: '0.75rem',
-                                color: 'var(--warm-gray)',
-                            }}
-                        >
-                            Laravel 12 • React • TypeScript • Framer Motion • Lenis
-                        </p>
-                    </div>
-
-                    <div className="pt-8">
-                        <p
-                            className="text-body"
-                            style={{
-                                fontSize: '0.625rem',
-                                color: 'var(--cool-gray)',
-                                letterSpacing: '0.1em',
-                            }}
-                        >
-                            © 2024 RPL Class. All memories preserved with love.
-                        </p>
-                    </div>
-                </motion.div>
-
-                {/* Floating Decoration */}
-                <motion.div
-                    className="absolute bottom-12 left-1/2 transform -translate-x-1/2"
-                    animate={{
-                        y: [0, -20, 0],
-                    }}
-                    transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: 'easeInOut',
-                    }}
-                >
-                    <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        style={{ opacity: 0.3 }}
+                {/* Subtitle & Description */}
+                <div className="space-y-8 max-w-xl mx-auto">
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1, delay: 0.4 }}
+                        className="text-[#5b5b5b] text-lg font-light leading-relaxed"
                     >
-                        <path
-                            d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                            fill="var(--burgundy)"
-                        />
-                    </svg>
-                </motion.div>
+                        Perjalanan kami sebagai siswa RPL mungkin berakhir di sini, 
+                        namun kode yang kami tulis dan kenangan yang kami buat akan tetap abadi.
+                    </motion.p>
+
+                    {/* Social links dengan Hover Effect yang Lincah */}
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.8 }}
+                        className="flex items-center justify-center gap-12 pt-8"
+                    >
+                        {[
+                            { name: 'Instagram', url: 'https://instagram.com/rpl.class' },
+                            { name: 'GitHub', url: 'https://github.com/rpl-class' }
+                        ].map((link) => (
+                            <motion.a
+                                key={link.name}
+                                href={link.url}
+                                target="_blank"
+                                className="group relative text-[10px] uppercase tracking-[0.3em] font-bold text-[#1a1a1a]"
+                                whileHover={{ y: -2 }}
+                            >
+                                {link.name}
+                                <span className="absolute -bottom-2 left-0 w-0 h-[1px] bg-[#1a1a1a] transition-all duration-500 group-hover:w-full" />
+                            </motion.a>
+                        ))}
+                    </motion.div>
+                </div>
             </motion.div>
 
-            {/* Background Decorative Elements */}
-            <div
-                className="absolute top-20 right-20 w-64 h-64 rounded-full opacity-5"
-                style={{
-                    background: `radial-gradient(circle, var(--burgundy) 0%, transparent 70%)`,
-                    filter: 'blur(80px)',
-                }}
-            />
-            <div
-                className="absolute bottom-20 left-20 w-80 h-80 rounded-full opacity-5"
-                style={{
-                    background: `radial-gradient(circle, var(--gold) 0%, transparent 70%)`,
-                    filter: 'blur(100px)',
-                }}
-            />
+            {/* Footer / Credits Section - Dibuat sangat elegan */}
+            <div className="absolute bottom-12 left-0 w-full px-12 flex flex-col md:flex-row justify-between items-end gap-8">
+                <div className="text-left">
+                    <p className="text-[8px] uppercase tracking-[0.4em] text-[#8b7e74] mb-2">Developed By</p>
+                    <p className="font-serif italic text-[#1a1a1a] text-lg">Your Name</p>
+                    <p className="text-[9px] text-[#5b5b5b] tracking-wider">Full Stack Developer — Class of 2024</p>
+                </div>
+
+                <div className="text-right hidden md:block">
+                    <p className="text-[8px] uppercase tracking-[0.4em] text-[#8b7e74] mb-2">Engineered With</p>
+                    <p className="text-[10px] text-[#1a1a1a] font-medium tracking-tighter">
+                        Laravel • React • TS • Framer Motion
+                    </p>
+                </div>
+            </div>
+
+            {/* Floating Star Ornament */}
+            <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="absolute -bottom-20 -right-20 opacity-[0.03] pointer-events-none"
+            >
+                <svg width="400" height="400" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 .5l4.226 8.56 9.447 1.372-6.837 6.665 1.614 9.403L12 18.102l-8.45 4.448 1.614-9.403-6.837-6.665 9.447-1.372L12 .5z"/>
+                </svg>
+            </motion.div>
         </section>
     );
 };

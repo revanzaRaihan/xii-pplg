@@ -114,7 +114,7 @@ class YearbookController extends Controller
 
         return Inertia::render('Yearbook/Index', [
             'students' => $students,
-            'comments' => $comments,
+            'comments' => Comment::latest()->get(),
             'memories' => $memories,
         ]);
     }

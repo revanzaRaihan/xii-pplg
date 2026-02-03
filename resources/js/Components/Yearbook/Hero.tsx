@@ -1,151 +1,120 @@
-// resources/js/Components/Yearbook/Hero.tsx
-
-import React, { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useScrollAnimation } from '@/Hooks/useScrollAnimation';
+import React, { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 const Hero: React.FC = () => {
-    const sectionRef = useRef<HTMLDivElement>(null);
-    const [titleRef, titleVisible] = useScrollAnimation({ threshold: 0.2, triggerOnce: true });
-    const [descRef, descVisible] = useScrollAnimation({ threshold: 0.3, triggerOnce: true });
-    
+    const containerRef = useRef<HTMLDivElement>(null);
+
     const { scrollYProgress } = useScroll({
-        target: sectionRef,
-        offset: ["start start", "end start"]
+        target: containerRef,
+        offset: ["start start", "end end"],
     });
 
-    const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-    const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.5, 0]);
+    const yLeft = useTransform(scrollYProgress, [0, 1], [0, -200]);
+    const yRight = useTransform(scrollYProgress, [0, 1], [0, -150]);
+    const opacityContent = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+
+    const titleWords = "MEMORIES".split("");
 
     return (
-        <section
-            id="hero"
-            ref={sectionRef}
-            className="relative min-h-screen flex items-center justify-center overflow-hidden grain-texture"
-            style={{ backgroundColor: 'var(--cream)' }}
-        >
-            <motion.div
-                style={{ y, opacity }}
-                className="max-w-7xl mx-auto px-6 lg:px-12 w-full"
-            >
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
-                    {/* Left Side - Welcome Text */}
-                    <div
-                        ref={titleRef}
-                        className={`blur-in ${titleVisible ? 'visible' : ''}`}
-                        style={{ transitionDelay: '0.2s' }}
-                    >
-                        <motion.h1
-                            className="text-display"
-                            style={{
-                                fontSize: 'clamp(3rem, 10vw, 8rem)',
-                                lineHeight: '0.9',
-                                color: 'var(--charcoal)',
-                            }}
-                            initial={{ opacity: 0, y: 100 }}
-                            animate={titleVisible ? { opacity: 1, y: 0 } : {}}
-                            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                        >
-                            Welcome
-                            <br />
-                            to our
-                            <br />
-                            <span style={{ color: 'var(--burgundy)' }}>Class!</span>
-                        </motion.h1>
-                    </div>
+        <div ref={containerRef} className="relative h-screen bg-[#F4F1EE]">
+            <section className="relative h-full w-full flex items-center justify-center overflow-hidden">
+                {/* 1. Grain Texture */}
+                <div className="absolute inset-0 pointer-events-none opacity-20 mix-blend-multiply bg-[url('https://grainy-gradients.vercel.app/noise.svg')] z-10" />
 
-                    {/* Right Side - Description */}
-                    <div
-                        ref={descRef}
-                        className={`blur-in ${descVisible ? 'visible' : ''}`}
-                        style={{ transitionDelay: '0.6s' }}
-                    >
-                        <motion.div
-                            initial={{ opacity: 0, x: 100 }}
-                            animate={descVisible ? { opacity: 1, x: 0 } : {}}
-                            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
-                        >
-                            <p
-                                className="text-heading mb-6"
-                                style={{
-                                    fontSize: 'clamp(1.5rem, 3vw, 2.5rem)',
-                                    color: 'var(--charcoal)',
-                                    lineHeight: '1.3',
-                                }}
-                            >
-                                Rekayasa Perangkat Lunak
-                            </p>
-                            <p
-                                className="text-body"
-                                style={{
-                                    fontSize: 'clamp(0.875rem, 1.2vw, 1rem)',
-                                    color: 'var(--warm-gray)',
-                                    lineHeight: '1.8',
-                                    maxWidth: '28rem',
-                                }}
-                            >
-                                Selamat datang di yearbook digital kami. Ini adalah koleksi kenangan,
-                                perjalanan, dan cerita dari kami sebagai siswa Rekayasa Perangkat Lunak.
-                                Kami telah belajar, bertumbuh, dan menciptakan sesuatu yang bermakna bersama-sama.
-                            </p>
-                            <motion.div
-                                className="mt-8"
-                                initial={{ opacity: 0 }}
-                                animate={descVisible ? { opacity: 1 } : {}}
-                                transition={{ delay: 1, duration: 0.8 }}
-                            >
-                                <p
-                                    className="text-body"
-                                    style={{
-                                        fontSize: '0.75rem',
-                                        color: 'var(--cool-gray)',
-                                        letterSpacing: '0.1em',
-                                        textTransform: 'uppercase',
-                                    }}
-                                >
-                                    Scroll untuk menjelajahi ↓
-                                </p>
-                            </motion.div>
-                        </motion.div>
-                    </div>
-                </div>
-
-                {/* Bottom Quote */}
+                {/* 2. Floating Images */}
                 <motion.div
-                    className="absolute bottom-12 left-1/2 transform -translate-x-1/2 text-center"
+                    style={{ y: yLeft, opacity: opacityContent }}
+                    className="absolute left-[5%] top-[20%] w-[15vw] aspect-[3/4] z-20 shadow-xl rounded-sm border-[6px] border-white hidden md:block"
+                >
+                    <img
+                        src="https://images.unsplash.com/photo-1523240682765-e70e80db93d4?q=80&w=800"
+                        className="w-full h-full object-cover grayscale"
+                        alt="Class"
+                    />
+                </motion.div>
+
+                <motion.div
+                    style={{ y: yRight, opacity: opacityContent }}
+                    className="absolute right-[5%] bottom-[20%] w-[20vw] aspect-video z-20 shadow-xl rounded-sm border-[6px] border-white rotate-3 hidden md:block"
+                >
+                    <img
+                        src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=800"
+                        className="w-full h-full object-cover grayscale"
+                        alt="Team"
+                    />
+                </motion.div>
+
+                {/* 3. Main Content Center - FIXED WIDTH & FLEX */}
+                <motion.div
+                    style={{ opacity: opacityContent }}
+                    className="relative z-30 w-full max-w-[90vw] md:max-w-[80vw] text-center flex flex-col items-center justify-center mx-auto"
+                >
+                    <motion.span
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-4 text-[var(--warm-gray)] text-[10px] md:text-xs font-mono tracking-[0.5em] uppercase whitespace-nowrap"
+                    >
+                        Software Engineering Edition
+                    </motion.span>
+
+                    {/* Container kata-kata agar tidak overflow ke kanan */}
+                    <div className="flex flex-wrap justify-center items-center w-full overflow-visible">
+                        {titleWords.map((char, i) => (
+                            <motion.span
+                                key={i}
+                                initial={{ y: 50, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{
+                                    duration: 1,
+                                    delay: 0.2 + i * 0.05,
+                                    ease: [0.22, 1, 0.36, 1],
+                                }}
+                                // Mengurangi ukuran font sedikit agar lebih aman di layar sedang
+                                className="block text-[16vw] md:text-[12vw] leading-none font-serif italic text-[#1a1a1a] select-none"
+                            >
+                                {char}
+                            </motion.span>
+                        ))}
+                    </div>
+
+                    <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.8 }}
+                        className="max-w-xs md:max-w-md text-[10px] md:text-sm leading-relaxed text-gray-500 font-light px-4 uppercase tracking-[0.3em] mt-4"
+                    >
+                        Sebuah Yearbook kelas Rekayasa Perangkat Lunak 2024.
+                    </motion.p>
+                </motion.div>
+
+                {/* 4. Bottom Quote Section - FIXED WIDTH */}
+                <motion.div
+                    style={{ opacity: opacityContent }}
+                    className="absolute bottom-12 left-0 right-0 text-center z-40 px-6"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.5, duration: 1 }}
                 >
                     <p
-                        className="text-body"
+                        className="font-serif leading-tight"
                         style={{
-                            fontSize: 'clamp(1rem, 2vw, 1.5rem)',
-                            color: 'var(--burgundy)',
-                            fontStyle: 'italic',
+                            fontSize: "clamp(0.875rem, 2.5vw, 1.25rem)",
+                            color: "var(--burgundy)",
+                            fontStyle: "italic",
                         }}
                     >
                         "Our journey, our stories, our legacy"
                     </p>
                 </motion.div>
-            </motion.div>
 
-            {/* Decorative Elements */}
-            <div
-                className="absolute top-20 right-20 w-64 h-64 rounded-full opacity-10"
-                style={{
-                    background: `radial-gradient(circle, var(--burgundy) 0%, transparent 70%)`,
-                    filter: 'blur(80px)',
-                }}
-            />
-            <div
-                className="absolute bottom-20 left-20 w-96 h-96 rounded-full opacity-10"
-                style={{
-                    background: `radial-gradient(circle, var(--forest-green) 0%, transparent 70%)`,
-                    filter: 'blur(100px)',
-                }}
-            />
-        </section>
+                {/* 5. Decorative Label */}
+                <div className="absolute top-32 left-8 hidden lg:block opacity-30 z-40">
+                    <p className="text-[10px] font-mono rotate-90 origin-left tracking-widest text-[#1a1a1a]">
+                        RPL_MOD_V.01
+                    </p>
+                </div>
+            </section>
+        </div>
     );
 };
 

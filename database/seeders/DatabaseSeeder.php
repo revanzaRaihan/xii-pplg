@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             StudentSeeder::class,
-            // CommentSeeder::class, // Uncomment jika ingin seed comments juga
+            CommentSeeder::class,
         ]);
     }
 }

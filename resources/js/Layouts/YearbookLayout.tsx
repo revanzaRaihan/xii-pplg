@@ -4,6 +4,8 @@ import React, { ReactNode } from 'react';
 import { Head } from '@inertiajs/react';
 import { useSmoothScroll } from '@/Hooks/useSmoothScroll';
 import Navbar from '@/Components/Yearbook/Navbar';
+import CustomCursor from '@/Components/UI/CustomCursor';
+import Preloader from '@/Components/UI/Preloader';
 
 interface YearbookLayoutProps {
     children: ReactNode;
@@ -38,6 +40,10 @@ const YearbookLayout: React.FC<YearbookLayoutProps> = ({
             </Head>
 
             <div className="relative min-h-screen">
+                {/* UI Components */}
+                <CustomCursor />
+                <Preloader />
+
                 {/* Navbar */}
                 <Navbar />
 

@@ -1,142 +1,51 @@
-// resources/js/Components/UI/CommentBubble.tsx
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Comment } from '@/types/yearbook';
 
 interface CommentBubbleProps {
     comment: Comment;
-    index: number;
+    index: number; // Tambahkan baris ini untuk menghilangkan error
 }
 
 const CommentBubble: React.FC<CommentBubbleProps> = ({ comment, index }) => {
-    // Random positioning untuk bubble effect
-    const randomX = Math.random() * 20 - 10; // -10 to 10
-    const randomRotate = Math.random() * 10 - 5; // -5 to 5
-
-    // Format date
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return new Intl.DateTimeFormat('id-ID', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-        }).format(date);
-    };
+    const date = new Date(comment.created_at).toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+    });
 
     return (
-        <motion.div
-            initial={{
-                opacity: 0,
-                scale: 0.5,
-                y: 100,
-                x: randomX,
-                rotate: randomRotate,
+        <motion.div 
+            // Animasi muncul berurutan berdasarkan index
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ 
+                duration: 0.6, 
+                delay: index * 0.1, // Semakin besar index, semakin lambat munculnya
+                ease: [0.215, 0.61, 0.355, 1] 
             }}
-            whileInView={{
-                opacity: 1,
-                scale: 1,
-                y: 0,
-                x: 0,
-                rotate: 0,
-            }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{
-                duration: 0.6,
-                delay: index * 0.1,
-                ease: [0.34, 1.56, 0.64, 1], // Bounce effect
-            }}
-            whileHover={{
-                scale: 1.05,
-                rotate: randomRotate / 2,
-                transition: { duration: 0.2 },
-            }}
-            className="relative group"
+            whileHover={{ x: 10 }} 
+            className="group relative flex items-start gap-4 p-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-gold/30 transition-all duration-500"
         >
-            {/* Bubble Container */}
-            <div
-                className="relative p-6 rounded-3xl transition-all duration-300"
-                style={{
-                    backgroundColor: 'var(--beige)',
-                    boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
-                }}
-            >
-                {/* Emoji (if exists) */}
-                {comment.emoji && (
-                    <motion.div
-                        className="absolute -top-4 -right-4 w-12 h-12 rounded-full flex items-center justify-center text-2xl"
-                        style={{
-                            backgroundColor: 'var(--gold)',
-                            boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-                        }}
-                        animate={{
-                            rotate: [0, -10, 10, -10, 0],
-                        }}
-                        transition={{
-                            duration: 2,
-                            repeat: Infinity,
-                            repeatDelay: 3,
-                        }}
-                    >
-                        {comment.emoji}
-                    </motion.div>
-                )}
+            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:bg-gold/10 transition-all duration-500">
+                {comment.emoji || '💬'}
+            </div>
 
-                {/* Message */}
-                <p
-                    className="text-body mb-4"
-                    style={{
-                        fontSize: '0.875rem',
-                        color: 'var(--charcoal)',
-                        lineHeight: '1.6',
-                    }}
-                >
+            <div className="flex-grow">
+                <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] text-gold/80 font-sans">
+                        {comment.name}
+                    </h4>
+                    <span className="text-[9px] text-gray-500 uppercase tracking-widest font-mono">
+                        {date}
+                    </span>
+                </div>
+                
+                <p className="text-gray-300 font-light leading-relaxed text-sm italic">
                     "{comment.message}"
                 </p>
 
-                {/* Author & Date */}
-                <div className="flex items-center justify-between gap-4">
-                    <p
-                        className="text-body font-bold"
-                        style={{
-                            fontSize: '0.75rem',
-                            color: 'var(--burgundy)',
-                        }}
-                    >
-                        {comment.name}
-                    </p>
-                    <p
-                        className="text-body"
-                        style={{
-                            fontSize: '0.625rem',
-                            color: 'var(--cool-gray)',
-                            letterSpacing: '0.05em',
-                        }}
-                    >
-                        {formatDate(comment.created_at)}
-                    </p>
-                </div>
-
-                {/* Decorative Corner */}
-                <div
-                    className="absolute bottom-0 right-0 w-16 h-16 opacity-10 pointer-events-none"
-                    style={{
-                        background: `radial-gradient(circle at bottom right, var(--burgundy) 0%, transparent 70%)`,
-                        borderBottomRightRadius: '1.5rem',
-                    }}
-                />
+                <div className="mt-4 w-0 h-[1px] bg-gold/30 group-hover:w-full transition-all duration-700" />
             </div>
-
-            {/* Hover Shadow */}
-            <motion.div
-                className="absolute inset-0 -z-10 rounded-3xl"
-                style={{
-                    backgroundColor: 'var(--burgundy)',
-                }}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileHover={{ opacity: 0.1, scale: 1 }}
-                transition={{ duration: 0.2 }}
-            />
         </motion.div>
     );
 };

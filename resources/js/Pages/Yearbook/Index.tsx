@@ -1,5 +1,3 @@
-// resources/js/Pages/Yearbook/Index.tsx
-
 import React from 'react';
 import YearbookLayout from '@/Layouts/YearbookLayout';
 import Hero from '@/Components/Yearbook/Hero';
@@ -12,19 +10,10 @@ import { PageProps } from '@/types/yearbook';
 const Index: React.FC<PageProps> = ({ students, comments, memories }) => {
     return (
         <YearbookLayout title="RPL Class 2024 - Our Journey">
-            {/* Hero Section */}
             <Hero />
-
-            {/* Memory Section */}
-            <Memory memories={memories} />
-
-            {/* About Us Section */}
+            <Memory/>
             <AboutUs students={students} />
-
-            {/* Leave Your Mark Section */}
             <LeaveYourMark comments={comments} />
-
-            {/* Goodbye Section */}
             <Goodbye />
         </YearbookLayout>
     );

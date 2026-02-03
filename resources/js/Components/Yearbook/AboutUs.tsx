@@ -1,7 +1,7 @@
 // resources/js/Components/Yearbook/AboutUs.tsx
 
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import StudentCard from '@/Components/UI/StudentCard';
 import { Student } from '@/types/yearbook';
 
@@ -11,179 +11,142 @@ interface AboutUsProps {
 
 const AboutUs: React.FC<AboutUsProps> = ({ students }) => {
     const sectionRef = useRef<HTMLDivElement>(null);
+    const isInView = useInView(sectionRef, { once: true, margin: "-10% 0px" });
 
-    // Default students data jika tidak ada dari backend
-    const defaultStudents: Student[] = [
-        {
-            id: 1,
-            name: 'Ahmad Rizki',
-            nickname: 'Rizki',
-            role: 'Full Stack Developer',
-            github: 'https://github.com/ahmadrizki',
-            instagram: 'https://instagram.com/ahmadrizki',
-            portrait: '/images/students/student-1.jpg',
-            bio: 'Passionate about creating beautiful web applications.',
-        },
-        {
-            id: 2,
-            name: 'Siti Nurhaliza',
-            nickname: 'Siti',
-            role: 'Frontend Developer',
-            github: 'https://github.com/sitinur',
-            instagram: 'https://instagram.com/sitinur',
-            portrait: '/images/students/student-2.jpg',
-            bio: 'UI/UX enthusiast with love for clean design.',
-        },
-        // Tambahkan siswa lainnya...
-    ];
-
-    const studentData = students || defaultStudents;
+    const studentData = students || []; // Data disingkat untuk efisiensi contoh
 
     const { scrollYProgress } = useScroll({
         target: sectionRef,
         offset: ['start end', 'end start'],
     });
 
-    const titleY = useTransform(scrollYProgress, [0, 0.3], [100, 0]);
-    const titleOpacity = useTransform(scrollYProgress, [0, 0.3], [0, 1]);
+    const titleY = useTransform(scrollYProgress, [0, 0.2], [100, 0]);
+    const opacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
 
     return (
         <section
             id="about"
             ref={sectionRef}
-            className="relative min-h-screen py-32 overflow-hidden grain-texture"
-            style={{ backgroundColor: 'var(--cream)' }}
+            className="relative min-h-screen py-32 overflow-hidden bg-[#fdfbf7]"
         >
-            {/* Section Header */}
-            <motion.div
-                style={{ y: titleY, opacity: titleOpacity }}
-                className="max-w-7xl mx-auto px-6 lg:px-12 mb-20"
-            >
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-end">
-                    <div>
-                        <h2
-                            className="text-display"
-                            style={{
-                                fontSize: 'clamp(3rem, 8vw, 6rem)',
-                                lineHeight: '0.9',
-                                color: 'var(--charcoal)',
-                            }}
-                        >
-                            Meet
-                            <br />
-                            <span style={{ color: 'var(--burgundy)' }}>The Team</span>
-                        </h2>
-                    </div>
-                    <div>
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none grain-texture" />
+
+            <div className="max-w-7xl mx-auto px-6 lg:px-12 mb-32">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                    
+                    {/* Judul dengan Animasi "Mask Reveal" */}
+                    <motion.div 
+                        className="lg:col-span-7"
+                        style={{ y: titleY, opacity }}
+                    >
+                        <div className="overflow-hidden">
+                            <motion.h2
+                                initial={{ y: "100%" }}
+                                animate={isInView ? { y: 0 } : { y: "100%" }}
+                                transition={{ duration: 0.8, ease: [0.25, 1, 0.5, 1] }}
+                                className="text-display font-serif"
+                                style={{
+                                    fontSize: 'clamp(3.5rem, 10vw, 8rem)',
+                                    lineHeight: '0.85',
+                                    color: '#1a1a1a',
+                                    letterSpacing: '-0.04em'
+                                }}
+                            >
+                                Meet
+                                <br />
+                                <span className="italic" style={{ color: '#800020', fontWeight: 300 }}>The Team</span>
+                            </motion.h2>
+                        </div>
+                    </motion.div>
+
+                    {/* Deskripsi dengan Staggered Lines */}
+                    <motion.div 
+                        className="lg:col-span-5 pt-8 lg:pt-20"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={isInView ? { opacity: 1, x: 0 } : {}}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                    >
                         <p
-                            className="text-body"
+                            className="text-body font-light italic"
                             style={{
-                                fontSize: 'clamp(0.875rem, 1.2vw, 1rem)',
-                                color: 'var(--warm-gray)',
+                                fontSize: 'clamp(1rem, 1.5vw, 1.125rem)',
+                                color: '#4a4a4a',
                                 lineHeight: '1.8',
+                                borderLeft: '2px solid #800020',
+                                paddingLeft: '1.5rem'
                             }}
                         >
                             Kami adalah siswa Rekayasa Perangkat Lunak yang bersemangat dalam
                             menciptakan solusi teknologi. Setiap individu membawa keunikan dan
                             keahlian yang berkontribusi pada kesuksesan bersama.
                         </p>
-                        <div className="mt-6 flex gap-8">
-                            <div>
-                                <p
-                                    className="text-display"
-                                    style={{
-                                        fontSize: 'clamp(2rem, 4vw, 3rem)',
-                                        color: 'var(--burgundy)',
-                                    }}
+
+                        {/* Statistik dengan Animasi Angka */}
+                        <div className="mt-12 flex gap-12 items-center">
+                            <div className="relative group cursor-default">
+                                <motion.p 
+                                    className="text-5xl font-serif text-burgundy"
+                                    whileHover={{ scale: 1.1, color: '#d4af37' }}
                                 >
                                     {studentData.length}
-                                </p>
-                                <p
-                                    className="text-body text-xs uppercase tracking-widest"
-                                    style={{ color: 'var(--cool-gray)' }}
-                                >
-                                    Students
-                                </p>
+                                </motion.p>
+                                <p className="text-[10px] uppercase tracking-[0.3em] text-gray-400 font-bold mt-2">Students</p>
+                                {/* Line Decor ala Yucca */}
+                                <div className="absolute -bottom-1 left-0 w-0 h-[1px] bg-gold transition-all duration-500 group-hover:w-full" />
                             </div>
-                            <div>
-                                <p
-                                    className="text-display"
-                                    style={{
-                                        fontSize: 'clamp(2rem, 4vw, 3rem)',
-                                        color: 'var(--burgundy)',
-                                    }}
+                            
+                            <div className="w-[1px] h-12 bg-gray-200" />
+                            
+                            <div className="relative group cursor-default">
+                                <motion.p 
+                                    className="text-5xl font-serif text-burgundy tracking-tighter"
+                                    whileHover={{ scale: 1.1, color: '#d4af37' }}
                                 >
                                     01
-                                </p>
-                                <p
-                                    className="text-body text-xs uppercase tracking-widest"
-                                    style={{ color: 'var(--cool-gray)' }}
-                                >
-                                    Class
-                                </p>
+                                </motion.p>
+                                <p className="text-[10px] uppercase tracking-[0.3em] text-gray-400 font-bold mt-2">Class</p>
+                                <div className="absolute -bottom-1 left-0 w-0 h-[1px] bg-gold transition-all duration-500 group-hover:w-full" />
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
-            </motion.div>
+            </div>
 
-            {/* Student Cards Grid */}
-            <div className="max-w-7xl mx-auto px-6 lg:px-12">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {/* Grid Kartu Siswa */}
+            <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
                     {studentData.map((student, index) => (
                         <StudentCard key={student.id} student={student} index={index} />
                     ))}
                 </div>
             </div>
 
-            {/* Bottom Quote */}
+            {/* Quote dengan Hover Effect */}
             <motion.div
-                className="max-w-7xl mx-auto px-6 lg:px-12 mt-32"
-                initial={{ opacity: 0, y: 50 }}
+                className="max-w-4xl mx-auto px-6 mt-40 text-center group"
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 1, delay: 0.5 }}
             >
-                <div className="border-t-2 pt-12" style={{ borderColor: 'var(--warm-gray)' }}>
-                    <p
-                        className="text-heading italic text-center"
-                        style={{
-                            fontSize: 'clamp(1.25rem, 3vw, 2rem)',
-                            color: 'var(--charcoal)',
-                            maxWidth: '48rem',
-                            margin: '0 auto',
-                        }}
-                    >
-                        "Individually we are one drop, together we are an ocean."
-                    </p>
-                    <p
-                        className="text-body text-center mt-4"
-                        style={{
-                            fontSize: '0.875rem',
-                            color: 'var(--cool-gray)',
-                            letterSpacing: '0.1em',
-                        }}
-                    >
-                        — RPL Class 2024
-                    </p>
-                </div>
+                <motion.div 
+                    className="inline-block w-12 h-[1px] bg-gold mb-8 transition-all duration-700 group-hover:w-24" 
+                />
+                <p
+                    className="font-serif italic leading-snug transition-colors duration-500 group-hover:text-burgundy"
+                    style={{
+                        fontSize: 'clamp(1.5rem, 4vw, 2.5rem)',
+                        color: '#1a1a1a',
+                    }}
+                >
+                    "Individually we are one drop, together we are an ocean."
+                </p>
+                <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.5em] text-gray-400">
+                    — RPL Class 2024 —
+                </p>
             </motion.div>
 
-            {/* Decorative Elements */}
-            <div
-                className="absolute top-1/3 right-0 w-96 h-96 rounded-full opacity-5"
-                style={{
-                    background: `radial-gradient(circle, var(--burgundy) 0%, transparent 70%)`,
-                    filter: 'blur(120px)',
-                }}
-            />
-            <div
-                className="absolute bottom-1/4 left-0 w-80 h-80 rounded-full opacity-5"
-                style={{
-                    background: `radial-gradient(circle, var(--forest-green) 0%, transparent 70%)`,
-                    filter: 'blur(100px)',
-                }}
-            />
+            {/* Orbs tetap subtle */}
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-burgundy/5 rounded-full blur-[120px] pointer-events-none" />
         </section>
     );
 };
